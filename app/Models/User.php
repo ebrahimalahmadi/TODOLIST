@@ -45,4 +45,10 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+
+    // this function defines the relationship many to many between User and Task
+    public function tasks()
+    {
+        return $this->hasMany(Task::class);
+    }
 }
