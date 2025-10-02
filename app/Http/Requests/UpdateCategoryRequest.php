@@ -11,7 +11,7 @@ class UpdateCategoryRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -22,7 +22,10 @@ class UpdateCategoryRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'name' => 'required|string|max:255|unique:categories,name,' . $this->route('category')->id,
+            'icon' => 'nullable|string',
+            'color' => 'nullable|string|size:7|regex:/^#[0-9A-Fa-f]{6}$/',
         ];
+        // this regex:/^#[0-9A-Fa-f]{6}$/ means the color must start with a # followed by exactly six hexadecimal characters (0-9, A-F, a-f).
     }
 }

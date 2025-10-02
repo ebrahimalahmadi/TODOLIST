@@ -13,7 +13,10 @@ class CategoryController extends Controller
      */
     public function index()
     {
-        //
+        // Display a listing of categories
+
+        session()->flash('info', 'info Category successfully.');
+        return view('pages.categories');
     }
 
     /**
@@ -30,6 +33,9 @@ class CategoryController extends Controller
     public function store(StoreCategoryRequest $request)
     {
         //
+        $category = Category::create($request->validated());
+
+        return redirect()->route(route: 'categories.index')->with('success', 'Category created successfully.');
     }
 
     /**
@@ -64,3 +70,13 @@ class CategoryController extends Controller
         //
     }
 }
+
+
+    // test the success toastr notification
+    // session()->flash('success', 'Category created successfully.');
+    // test the warning toastr notification
+    // session()->flash('warning', 'warning Category successfully.');
+    // test the error toastr notification
+    // session()->flash('error', 'error Category successfully.');
+    // test the info toastr notification
+    // session()->flash('info', 'info Category successfully.');

@@ -11,7 +11,7 @@ class UpdateTaskRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -22,7 +22,13 @@ class UpdateTaskRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'title' => 'sometimes|string|max:255',
+            'description' => 'nullable|string',
+            'category_id' => 'sometimes|exists:categories,id',
+            'status' => 'sometimes|in:pending,in_progress,completed',
+            'due_date' => 'nullable|date',
         ];
+
+        // 'sometimes' means that the field is not required, but if it is present in the request, it must pass the validation rules specified.
     }
 }
