@@ -13,14 +13,7 @@ class CategoryController extends Controller
      */
     public function index()
     {
-        // Display a listing of categories
-
-        // session()->flash('info', 'info Category successfully.');
-        // return view('pages.categories');
         $categories = Category::all();
-        // return view('pages.categories', compact('categories'));
-        // return view('pages.categories', compact('categories'))->with('success', 'Category created successfully.');
-        // return view('pages.categories', compact('categories'))->with('success', 'Category created successfully.');
         return view('pages.categories', compact('categories'));
     }
 
@@ -37,7 +30,6 @@ class CategoryController extends Controller
      */
     public function store(StoreCategoryRequest $request)
     {
-        // return $request->all();
 
         $category = Category::create($request->validated());
         return redirect()->route('categories.index')->with('success', 'Category created successfully.');
