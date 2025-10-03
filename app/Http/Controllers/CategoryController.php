@@ -15,8 +15,13 @@ class CategoryController extends Controller
     {
         // Display a listing of categories
 
-        session()->flash('info', 'info Category successfully.');
-        return view('pages.categories');
+        // session()->flash('info', 'info Category successfully.');
+        // return view('pages.categories');
+        $categories = Category::all();
+        // return view('pages.categories', compact('categories'));
+        // return view('pages.categories', compact('categories'))->with('success', 'Category created successfully.');
+        // return view('pages.categories', compact('categories'))->with('success', 'Category created successfully.');
+        return view('pages.categories', compact('categories'));
     }
 
     /**
@@ -32,10 +37,10 @@ class CategoryController extends Controller
      */
     public function store(StoreCategoryRequest $request)
     {
-        //
-        $category = Category::create($request->validated());
+        // return $request->all();
 
-        return redirect()->route(route: 'categories.index')->with('success', 'Category created successfully.');
+        $category = Category::create($request->validated());
+        return redirect()->route('categories.index')->with('success', 'Category created successfully.');
     }
 
     /**
@@ -60,6 +65,8 @@ class CategoryController extends Controller
     public function update(UpdateCategoryRequest $request, Category $category)
     {
         //
+        $category->update($request->validated());
+        return redirect()->route('categories.index')->with('success', 'Category updated successfully.');
     }
 
     /**
@@ -67,7 +74,12 @@ class CategoryController extends Controller
      */
     public function destroy(Category $category)
     {
-        //
+        // this method is to prevent deletion of category if it has associated tasks
+        if ($category->tasks()->count() > 0) {
+            return redirect()->route('categories.index')->with('error', 'Cannot delete category with associated tasks.');
+        }
+        $category->delete();
+        return redirect()->route('categories.index')->with('success', 'Category deleted successfully.');
     }
 }
 

@@ -20,6 +20,12 @@ class Task extends Model
         'user_id',
     ];
 
+    // this function defines the data type of the due_date field
+    protected $casts = [
+        'due_date' => 'datetime',
+    ];
+
+
     // this function defines the relationship many to many between Task and Category
     public function category()
     {

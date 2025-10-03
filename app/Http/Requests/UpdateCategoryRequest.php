@@ -11,7 +11,9 @@ class UpdateCategoryRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return true;
+        // return true;
+        $category = $this->route('category');
+        return $category && $category->tasks()->count() === 0;
     }
 
     /**
