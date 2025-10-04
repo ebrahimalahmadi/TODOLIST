@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\Task;
 use App\Http\Requests\StoreTaskRequest;
 use App\Http\Requests\UpdateTaskRequest;
+use App\Models\Category;
+use Illuminate\Support\Facades\Auth;
 
 class TaskController extends Controller
 {
@@ -14,7 +16,12 @@ class TaskController extends Controller
     public function index()
     {
         //
-        return view('pages.tasks');
+        // return view('pages.tasks');
+
+        $categories = Category::all();
+        // $tasks = Task::with('category')->get();
+        $tasks = Task::with('category')->paginate(5);
+        return view('pages.tasks', compact('tasks', 'categories'));
     }
 
     /**
@@ -30,7 +37,10 @@ class TaskController extends Controller
      */
     public function store(StoreTaskRequest $request)
     {
-        //
+        Auth::user()->tasks()->create($request->validated());
+
+
+        return redirect()->back()->with('success', 'Task created successfully.');
     }
 
     /**
@@ -55,6 +65,10 @@ class TaskController extends Controller
     public function update(UpdateTaskRequest $request, Task $task)
     {
         //
+        // return $request->all();
+
+        $task->update($request->validated());
+        return redirect()->back()->with('success', 'Task updated successfully.');
     }
 
     /**
@@ -63,5 +77,7 @@ class TaskController extends Controller
     public function destroy(Task $task)
     {
         //
+        $task->delete();
+        return redirect()->back()->with('success', 'Task deleted successfully.');
     }
 }

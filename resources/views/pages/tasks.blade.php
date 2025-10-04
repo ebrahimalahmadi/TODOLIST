@@ -11,8 +11,10 @@
     </x-slot>
 
     <div class="py-12">
+
+        <!-- Filter Task Modal -->
         <div class="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
-            <div class="flex flex-wrap gap-4 mb-4 items-center justify-between">
+            {{-- <div class="flex flex-wrap gap-4 mb-4 items-center justify-between">
                 <form action="" method="get"
                     class="w-full flex flex-wrap gap-4 items-center justify-between bg-gray-900/80 rounded-2xl shadow-lg px-6 py-4 border border-gray-800">
                     <div class="relative">
@@ -87,7 +89,11 @@
                         Apply
                     </button>
                 </form>
-            </div>
+            </div> --}}
+
+
+
+            <!-- show the all Tasks Modal -->
             <div class="bg-gray-800 shadow-lg overflow-x-auto">
                 <table class="min-w-full text-sm">
                     <thead>
@@ -113,7 +119,57 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr class="border-b border-gray-700">
+                        @if (count($tasks) > 0)
+                            @foreach ($tasks as $task)
+                                <tr class="border-b border-gray-700">
+                                    <td class="py-3 px-4 text-white">{{ $task->title }}</td>
+                                    <td class="py-3 px-4 truncate max-w-xs text-gray-400">
+                                        {{ $task->description }}
+                                    </td>
+                                    <td class="py-3 px-4 text-white">{{ $task->category->name }}</td>
+                                    <td class="py-3 px-4 text-white">
+                                        {{ \Carbon\Carbon::parse(time: $task->due_date)->format('Y-m-d') }}</td>
+
+                                    {{-- <td class="py-3 px-4">
+                                        <span
+                                            class="px-3 py-1 rounded-xl bg-emerald-900 text-emerald-300 font-semibold">{{ $task->status }}</span>
+                                    </td> --}}
+                                    {{-- <td class="py-3 px-4">
+                                        <span
+                                            class="px-3 py-1 rounded-xl bg-emerald-900 text-emerald-300 font-semibold">{{ str_replace('_', ' ', $task->status) }}
+                                        </span>
+                                    </td> --}}
+                                    <td class="py-3 px-4">
+                                        <span
+                                            class="px-3 py-1 rounded-xl bg-emerald-900 text-emerald-300 font-semibold">{{ str_replace('_', ' ', Str::title($task->status)) }}
+                                        </span>
+                                    </td>
+                                    <td class="py-3 px-4 flex gap-2">
+                                        {{-- <button
+                                            class="px-3 py-1 bg-indigo-900 text-indigo-300 rounded-xl hover:bg-indigo-700 transition editTaskBtn"
+                                            onclick="openEditModal({{ $task->id }}, '{{ $task->title }}', '{{ $task->description }}', {{ $task->category_id }}, '{{ $task->status }}', '{{ $task->due_date }}')">
+                                            Edit
+                                        </button> --}}
+                                        <button
+                                            class="px-3 py-1 bg-indigo-900 text-indigo-300 rounded-xl hover:bg-indigo-700 transition editTaskBtn"
+                                            onclick="openEditModal({{ $task->id }}, '{{ $task->title }}', '{{ $task->description }}', {{ $task->category_id }}, '{{ $task->status }}', '{{ $task->due_date }}')">
+                                            Edit
+                                        </button>
+                                        <button
+                                            class="px-3 py-1 bg-red-900 text-red-300 rounded-xl hover:bg-red-700 transition deleteTaskBtn"
+                                            onclick="openDeleteModal({{ $task->id }})">
+                                            Delete
+                                        </button>
+                                    </td>
+                                </tr>
+                            @endforeach
+
+                        @endif
+
+
+
+                        {{-- 
+                              <tr class="border-b border-gray-700">
                             <td class="py-3 px-4 text-white">Finish project</td>
                             <td class="py-3 px-4 truncate max-w-xs text-gray-400">
                                 Complete the frontend and backend for the todo list app.
@@ -181,10 +237,11 @@
                                     Delete
                                 </button>
                             </td>
-                        </tr>
+                        </tr> 
+                        --}}
                     </tbody>
                 </table>
-                <div class="flex justify-end items-center gap-2 p-4">
+                {{-- <div class="flex justify-end items-center gap-2 p-4">
                     <button class="px-3 py-1 rounded-xl bg-gray-900 text-gray-400 hover:bg-gray-800 transition">
                         Prev
                     </button>
@@ -192,12 +249,137 @@
                     <button class="px-3 py-1 rounded-xl bg-gray-900 text-gray-400 hover:bg-gray-800 transition">
                         Next
                     </button>
+                </div> --}}
+
+
+                {{-- <div class="flex justify-end items-center gap-2 p-4">
+                    <button class="px-3 py-1 rounded-xl bg-gray-900 text-gray-400 hover:bg-gray-800 transition">
+                        Prev
+                    </button>
+                    <span class="px-3 py-1 rounded-xl bg-gray-900 text-indigo-300">1</span>
+                    <button class="px-3 py-1 rounded-xl bg-gray-900 text-gray-400 hover:bg-gray-800 transition">
+                        Next
+                    </button>
+                </div> --}}
+
+                <!-- this code for show the pagination -->
+                <!-- Render pagination links -->
+
+                <div class="flex justify-end items-center gap-2 p-4">
+                    {{-- Previous Page Link --}}
+                    @if ($tasks->onFirstPage())
+                        <span class="px-3 py-1 rounded-xl bg-gray-900 text-gray-500 cursor-not-allowed">Prev</span>
+                    @else
+                        <a href="{{ $tasks->previousPageUrl() }}"
+                            class="px-3 py-1 rounded-xl bg-gray-900 text-gray-400 hover:bg-gray-800 transition">Prev</a>
+                    @endif
+
+                    {{-- Page Numbers --}}
+                    @foreach ($tasks->getUrlRange(1, $tasks->lastPage()) as $page => $url)
+                        @if ($page == $tasks->currentPage())
+                            <span class="px-3 py-1 rounded-xl bg-gray-900 text-indigo-300">{{ $page }}</span>
+                        @else
+                            <a href="{{ $url }}"
+                                class="px-3 py-1 rounded-xl bg-gray-900 text-gray-400 hover:bg-gray-800 transition">{{ $page }}</a>
+                        @endif
+                    @endforeach
+
+                    {{-- Next Page Link --}}
+                    @if ($tasks->hasMorePages())
+                        <a href="{{ $tasks->nextPageUrl() }}"
+                            class="px-3 py-1 rounded-xl bg-gray-900 text-gray-400 hover:bg-gray-800 transition">Next</a>
+                    @else
+                        <span class="px-3 py-1 rounded-xl bg-gray-900 text-gray-500 cursor-not-allowed">Next</span>
+                    @endif
                 </div>
+                <!-- this the End code for show the pagination -->
             </div>
         </div>
     </div>
+
+
+
     <!-- Add Task Modal -->
+
     <div id="addTaskModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 hidden">
+        <div class="bg-gray-800 rounded-2xl shadow-xl p-8 animate-modal w-full max-w-md text-center">
+            <h3 class="text-xl font-bold text-indigo-400 mb-4">Add Task</h3>
+            <form method="post" action="{{ route('tasks.store') }}" class="space-y-4">
+                @csrf
+                <div class="text-left">
+                    <label for="addTaskTitle" class="block text-sm font-medium text-gray-300 mb-1">Title</label>
+                    <input id="addTaskTitle" name="title" type="text" placeholder="Title"
+                        class="w-full px-4 py-2 rounded-xl border border-gray-700 bg-gray-900 text-gray-100 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition" />
+                </div>
+                <div class="text-left">
+                    <label for="addTaskDesc" class="block text-sm font-medium text-gray-300 mb-1">Description</label>
+                    <textarea id="addTaskDesc" name="description" placeholder="Description"
+                        class="w-full px-4 py-2 rounded-xl border border-gray-700 bg-gray-900 text-gray-100 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition"></textarea>
+                </div>
+                <div class="text-left">
+                    <label for="addTaskCategory" class="block text-sm font-medium text-gray-300 mb-1">Category</label>
+                    <select id="addTaskCategory" name="category_id"
+                        class="w-full px-4 py-2 rounded-xl border border-gray-700 bg-gray-900 text-gray-100 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition">
+                        @foreach ($categories as $category)
+                            <option value="{{ $category->id }}">{{ $category->name }}</option>
+                        @endforeach
+                    </select>
+                </div>
+                <div class="text-left">
+                    <label for="addTaskStatus" class="block text-sm font-medium text-gray-300 mb-1">Status</label>
+                    <select id="addTaskStatus" name="status"
+                        class="w-full px-4 py-2 rounded-xl border border-gray-700 bg-gray-900 text-gray-100 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition">
+                        <option value="completed">Completed</option>
+                        <option value="pending">Pending</option>
+                        <option value="in_progress">In Progress</option>
+                    </select>
+                </div>
+
+                {{-- <div class="text-left">
+                    <label for="addTaskDue" class="block text-sm font-medium text-gray-300 mb-1">Due Date</label>
+                    <input id="addTaskDue" type="date"
+                        class="w-full px-4 py-2 rounded-xl border border-gray-700 bg-gray-900 text-gray-100 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition" />
+                </div>
+                 --}}
+
+                <div class="text-left">
+                    <label for="addTaskDue" class="block text-sm font-medium text-gray-300 mb-1">Due Date</label>
+                    <input id="addTaskDue" type="datetime-local" name="due_date"
+                        class="w-full px-4 py-2 rounded-xl border border-gray-700 bg-gray-900 text-gray-100 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition" />
+                </div>
+
+                {{-- <div class="flex gap-2 justify-center">
+                    <button type="submit"
+                        class="px-6 py-2 bg-emerald-600 text-white rounded-xl shadow-lg hover:bg-emerald-700 transition font-semibold"
+                        onclick="toastr.success('Task added successfully!'); closeModal('addTaskModal')">
+                        Save
+                    </button>
+                    <button type="button"
+                        class="px-6 py-2 bg-gray-700 text-gray-300 rounded-xl hover:bg-gray-600 transition font-semibold"
+                        onclick="closeModal('addTaskModal')">
+                        Cancel
+                    </button>
+                </div> --}}
+                <div class="flex gap-2 justify-center">
+                    <button type="submit"
+                        class="px-6 py-2 bg-emerald-600 text-white rounded-xl shadow-lg hover:bg-emerald-700 transition font-semibold">
+                        Save
+                    </button>
+                    <button type="button"
+                        class="px-6 py-2 bg-gray-700 text-gray-300 rounded-xl hover:bg-gray-600 transition font-semibold"
+                        onclick="closeModal('addTaskModal')">
+                        Cancel
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+
+
+
+
+    {{-- <div id="addTaskModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 hidden">
         <div class="bg-gray-800 rounded-2xl shadow-xl p-8 animate-modal w-full max-w-md text-center">
             <h3 class="text-xl font-bold text-indigo-400 mb-4">Add Task</h3>
             <form class="space-y-4">
@@ -248,10 +430,80 @@
                 </div>
             </form>
         </div>
-    </div>
+    </div> --}}
+
+
 
     <!-- Edit Task Modal -->
     <div id="editTaskModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 hidden">
+        <div class="bg-gray-800 rounded-2xl shadow-xl p-8 animate-modal w-full max-w-md text-center">
+            <h3 class="text-xl font-bold text-indigo-400 mb-4">Edit Task</h3>
+            <form method="post" class="space-y-4" id="editTaskForm">
+                @csrf
+                @method('PUT')
+                <div class="text-left">
+                    <label for="editTaskTitle" class="block text-sm font-medium text-gray-300 mb-1">Title</label>
+                    <input id="editTaskTitle" name="title" type="text" placeholder="Title"
+                        class="w-full px-4 py-2 rounded-xl border border-gray-700 bg-gray-900 text-gray-100 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition" />
+                </div>
+                <div class="text-left">
+                    <label for="editTaskDesc" class="block text-sm font-medium text-gray-300 mb-1">Description</label>
+                    <textarea id="editTaskDesc" name="description" placeholder="Description"
+                        class="w-full px-4 py-2 rounded-xl border border-gray-700 bg-gray-900 text-gray-100 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition"></textarea>
+                </div>
+                <div class="text-left">
+                    <label for="editTaskCategory"
+                        class="block text-sm font-medium text-gray-300 mb-1">Category</label>
+                    <select id="editTaskCategory" name="category_id"
+                        class="w-full px-4 py-2 rounded-xl border border-gray-700 bg-gray-900 text-gray-100 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition">
+                        @foreach ($categories as $category)
+                            <option value="{{ $category->id }}">{{ $category->name }}</option>
+                        @endforeach
+                    </select>
+                </div>
+                <div class="text-left">
+                    <label for="editTaskStatus" class="block text-sm font-medium text-gray-300 mb-1">Status</label>
+                    <select id="editTaskStatus" name="status"
+                        class="w-full px-4 py-2 rounded-xl border border-gray-700 bg-gray-900 text-gray-100 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition">
+                        <option value="completed">Completed</option>
+                        <option value="pending">Pending</option>
+                        <option value="in_progress">In Progress</option>
+                    </select>
+                </div>
+                {{-- <div class="text-left">
+                    <label for="editTaskStatus" class="block text-sm font-medium text-gray-300 mb-1">Status</label>
+                    <select id="editTaskStatus" name="status"
+                        class="w-full px-4 py-2 rounded-xl border border-gray-700 bg-gray-900 text-gray-100 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition">
+                        <option value="completed">Completed</option>
+                        <option value="pending">Pending</option>
+                        <option value="in_progress">In Progress</option>
+                    </select>
+                </div> --}}
+                <div class="text-left">
+                    <label for="editTaskDue" class="block text-sm font-medium text-gray-300 mb-1">Due Date</label>
+                    <input id="editTaskDue" type="datetime-local" name="due_date"
+                        class="w-full px-4 py-2 rounded-xl border border-gray-700 bg-gray-900 text-gray-100 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition" />
+                </div>
+                <div class="flex gap-2 justify-center">
+                    <button type="submit"
+                        class="px-6 py-2 bg-emerald-600 text-white rounded-xl shadow-lg hover:bg-emerald-700 transition font-semibold"
+                        onclick="toastr.success('Task updated successfully!'); closeModal('editTaskModal')">
+                        Save
+                    </button>
+                    <button type="button"
+                        class="px-6 py-2 bg-gray-700 text-gray-300 rounded-xl hover:bg-gray-600 transition font-semibold"
+                        onclick="closeModal('editTaskModal')">
+                        Cancel
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+
+
+
+    {{-- <div id="editTaskModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 hidden">
         <div class="bg-gray-800 rounded-2xl shadow-xl p-8 animate-modal w-full max-w-md text-center">
             <h3 class="text-xl font-bold text-indigo-400 mb-4">Edit Task</h3>
             <form class="space-y-4">
@@ -303,10 +555,35 @@
                 </div>
             </form>
         </div>
-    </div>
+    </div> --}}
+
 
     <!-- Delete Modal -->
     <div id="deleteModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 hidden">
+        <form action="" method="POST" id="deleteTaskForm"
+            class="bg-gray-800 rounded-2xl shadow-xl p-8 animate-modal w-full max-w-sm text-center">
+            @csrf
+            @method('DELETE')
+            <h3 class="text-xl font-bold text-red-400 mb-4">Delete Task?</h3>
+            <p class="text-gray-300 mb-6">
+                Are you sure you want to delete this task?
+            </p>
+            <div class="flex gap-2 justify-center">
+                <button class="px-6 py-2 bg-red-600 text-white rounded-xl hover:bg-red-700 transition font-semibold"
+                    onclick="toastr.success('Task deleted successfully!'); closeModal('deleteModal')">
+                    Delete
+                </button>
+                <button
+                    class="px-6 py-2 bg-gray-700 text-gray-300 rounded-xl hover:bg-gray-600 transition font-semibold"
+                    onclick="closeModal('deleteModal')">
+                    Cancel
+                </button>
+            </div>
+        </form>
+    </div>
+
+
+    {{-- <div id="deleteModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 hidden">
         <div class="bg-gray-800 rounded-2xl shadow-xl p-8 animate-modal w-full max-w-sm text-center">
             <h3 class="text-xl font-bold text-red-400 mb-4">Delete Task?</h3>
             <p class="text-gray-300 mb-6">
@@ -324,49 +601,31 @@
                 </button>
             </div>
         </div>
-    </div>
+    </div> --}}
 
 
     <!-- Scripts -->
     <script>
-        // Dropdown logic
-        const dropdownBtn = document.getElementById("profileDropdownBtn");
-        const dropdownMenu = document.getElementById("profileDropdownMenu");
-        dropdownBtn.onclick = function(e) {
-            e.stopPropagation();
-            dropdownMenu.classList.toggle("hidden");
-        };
-        document.addEventListener("click", function(e) {
-            if (!dropdownMenu.classList.contains("hidden")) {
-                if (!dropdownMenu.contains(e.target) && e.target !== dropdownBtn) {
-                    dropdownMenu.classList.add("hidden");
-                }
-            }
-        });
-        // Mobile menu logic
-        const mobileMenuBtn = document.getElementById("mobileMenuBtn");
-        const mobileMenu = document.getElementById("mobileMenu");
-        mobileMenuBtn.onclick = function(e) {
-            e.stopPropagation();
-            mobileMenu.classList.toggle("hidden");
-        };
-        document.addEventListener("click", function(e) {
-            if (!mobileMenu.classList.contains("hidden")) {
-                if (!mobileMenu.contains(e.target) && e.target !== mobileMenuBtn) {
-                    mobileMenu.classList.add("hidden");
-                }
-            }
-        });
+        function openEditModal(id, title, description, categoryId, status, dueDate) {
+            document.getElementById('editTaskTitle').value = title;
+            document.getElementById('editTaskDesc').value = description;
+            document.getElementById('editTaskCategory').value = categoryId;
+            document.getElementById('editTaskStatus').value = status;
+            document.getElementById('editTaskDue').value = dueDate;
+            document.getElementById('editTaskForm').action = 'tasks/' + id;
 
-        // Modal utility functions
-        function openModal(modalId) {
-            const modal = document.getElementById(modalId);
-            if (modal) modal.classList.remove("hidden");
-        }
-
-        function closeModal(modalId) {
-            const modal = document.getElementById(modalId);
-            if (modal) modal.classList.add("hidden");
+            openModal('editTaskModal');
         }
     </script>
+
+    <!-- Delete Modal Script -->
+
+    <script>
+        function openDeleteModal(id) {
+            document.getElementById('deleteTaskForm').action = 'tasks/' + id;
+            openModal('deleteModal');
+        }
+    </script>
+
+
 </x-app-layout>
