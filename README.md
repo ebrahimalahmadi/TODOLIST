@@ -6,7 +6,8 @@ Welcome to the **Todo List & Category Management** documentation! This guide cov
 
 ## 📋 Task Requirements
 
-For detailed requirements and evaluation criteria, see [TaskRequirements.md](./TaskRequirements.pdf).
+For detailed requirements and evaluation criteria, see [Task-Requirements.pdf](./Task-Requirements.pdf).
+
 
 > **Note:** The [`frontend`](./frontend) folder contains only HTML pages to be used for the task UI. You can use these as static templates or integrate them into your Laravel views as needed.
 
