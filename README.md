@@ -1,61 +1,159 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# ✅ Todo List & Category Management
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Welcome to the **Todo List & Category Management** documentation! This guide covers the features, routes, setup, and code structure for this Laravel application, following a modern, user-friendly approach.
 
-## About Laravel
+---
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## 📋 Task Requirements
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+For detailed requirements and evaluation criteria, see [TaskRequirements.md](./Task-Requirements.pdf).
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+> **Note:** The [`frontend`](./frontend) folder contains only HTML pages to be used for the task UI. You can use these as static templates or integrate them into your Laravel views as needed.
 
-## Learning Laravel
+---
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+## 🧩 Features
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+-   **User Authentication**: Login, registration, profile management.
+-   **Task Management**: Create, update, delete, restore, and permanently delete tasks.
+-   **Category Management**: Create, update, delete categories with custom colors and icons.
+-   **Filtering & Sorting**: Filter tasks by status, category, search, and sort by due date or status.
+-   **Dashboard**: View statistics for tasks and categories.
+-   **Soft Deletes**: Restore or permanently delete tasks.
+-   **Responsive UI**: Built with Tailwind CSS and Alpine.js.
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+---
 
-## Laravel Sponsors
+## 🛣️ Web Routes
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+| **Method** | **Route**                    | **Controller Method**        | **Description**             | **Access Control** |
+| ---------- | ---------------------------- | ---------------------------- | --------------------------- | ------------------ |
+| GET        | `/`                          | `Anonymous`                  | Welcome page                | Public             |
+| GET        | `/dashboard`                 | `DashboardController@index`  | Dashboard statistics        | Authenticated      |
+| GET        | `/tasks`                     | `TaskController@index`       | List/filter/sort tasks      | Authenticated      |
+| POST       | `/tasks`                     | `TaskController@store`       | Create a new task           | Authenticated      |
+| PUT/PATCH  | `/tasks/{task}`              | `TaskController@update`      | Update a task               | Authenticated      |
+| DELETE     | `/tasks/{task}`              | `TaskController@destroy`     | Soft delete a task          | Authenticated      |
+| POST       | `/tasks/{task}/restore`      | `TaskController@restore`     | Restore a soft-deleted task | Authenticated      |
+| DELETE     | `/tasks/{task}/force-delete` | `TaskController@forceDelete` | Permanently delete a task   | Authenticated      |
+| GET        | `/categories`                | `CategoryController@index`   | List categories             | Authenticated      |
+| POST       | `/categories`                | `CategoryController@store`   | Create a new category       | Authenticated      |
+| PUT/PATCH  | `/categories/{category}`     | `CategoryController@update`  | Update a category           | Authenticated      |
+| DELETE     | `/categories/{category}`     | `CategoryController@destroy` | Delete a category           | Authenticated      |
+| GET        | `/profile`                   | `ProfileController@edit`     | Edit user profile           | Authenticated      |
+| PATCH      | `/profile`                   | `ProfileController@update`   | Update user profile         | Authenticated      |
+| DELETE     | `/profile`                   | `ProfileController@destroy`  | Delete user account         | Authenticated      |
 
-### Premium Partners
+---
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+## 🗂️ Project Structure
 
-## Contributing
+```
+TODOLIST/
+├── app/
+│   ├── Http/
+│   │   ├── Controllers/
+│   │   │   ├── CategoryController.php
+│   │   │   ├── DashboardController.php
+│   │   │   ├── ProfileController.php
+│   │   │   ├── TaskController.php
+│   ├── Models/
+│   │   ├── Category.php
+│   │   ├── Task.php
+│   │   ├── User.php
+│   ├── Policies/
+│   ├── Providers/
+├── database/
+│   ├── migrations/
+│   │   ├── 0001_01_01_000000_create_users_table.php
+│   │   ├── 2025_09_04_131023_create_categories_table.php
+│   │   ├── 2025_09_04_131045_create_tasks_table.php
+│   ├── seeders/
+│   │   ├── CategorySeeder.php
+│   │   ├── TaskSeeder.php
+│   │   ├── DatabaseSeeder.php
+├── resources/
+│   ├── views/
+│   │   ├── dashboard.blade.php
+│   │   ├── pages/
+│   │   │   ├── tasks.blade.php
+│   │   │   ├── categories.blade.php
+├── routes/
+│   ├── web.php
+│   ├── auth.php
+├── tests/
+│   ├── Feature/
+│   ├── Unit/
+├── README.md
+├── composer.json
+├── package.json
+├── phpunit.xml
+└── ...
+```
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+---
 
-## Code of Conduct
+## 🛠️ Setup and Installation
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+To get started with this system, follow these installation steps:
 
-## Security Vulnerabilities
+### 1. Clone the repository:
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+```bash
+git clone https://github.com/ebrahimalahmadi/TODOLIST
+cd TODOLIST
+```
 
-## License
+### 2. Install dependencies:
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+```bash
+composer install
+npm install
+```
+
+### 3. Set up the `.env` file:
+
+Make sure you have the correct environment variables set in your `.env` file, especially the database connection.
+
+```bash
+cp .env.example .env
+php artisan key:generate
+```
+
+### 4. Migrate the database:
+
+Run the migration commands to set up the necessary tables for users, categories, and tasks.
+
+```bash
+php artisan migrate --seed
+```
+
+### 5. Build frontend assets:
+
+```bash
+npm run build
+```
+
+### 6. Serve the application:
+
+```bash
+php artisan serve
+```
+
+---
+
+## 🔧 Development Tools
+
+-   **Laravel 12**: PHP framework for building the application.
+-   **Tailwind CSS**: Utility-first CSS framework for UI.
+-   **Alpine.js**: Lightweight JS framework for interactivity.
+-   **Pest & PHPUnit**: For testing.
+-   **SQLite/MySQL**: Database support.
+
+---
+
+## 🔗 Connect & Follow
+
+-   **GitHub:** [@ebrahimalahmadi](https://github.com/ebrahimalahmadi)
+
+This repository is **continuously updated Star this repo** ⭐ to stay updated! 🚀

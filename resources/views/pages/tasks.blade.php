@@ -93,6 +93,86 @@
 
 
 
+            <!-- Filter Task Modal -->
+            <div class="flex flex-wrap gap-4 mb-4 items-center justify-between">
+                <form action="" method="get"
+                    class="w-full flex flex-wrap gap-4 items-center justify-between bg-gray-900/80 rounded-2xl shadow-lg px-6 py-4 border border-gray-800">
+                    <div class="relative">
+                        <select name="status"
+                            class="pl-10 pr-4 py-2 rounded-xl border border-gray-700 bg-gray-900 text-gray-100 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition">
+                            <option value="all">Status: All</option>
+                            <option value="completed">Completed</option>
+                            <option value="pending">Pending</option>
+                            <option value="overdue">Overdue</option>
+                        </select>
+                        <span class="absolute left-3 top-2.5 text-indigo-400">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
+                                stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M5 13l4 4L19 7" />
+                            </svg>
+                        </span>
+                    </div>
+                    <div class="relative">
+                        <select name="category"
+                            class="pl-10 pr-4 py-2 rounded-xl border border-gray-700 bg-gray-900 text-gray-100 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition">
+                            <option value="all">Category: All</option>
+                            <option value="work">Work</option>
+                            <option value="personal">Personal</option>
+                            <option value="shopping">Shopping</option>
+                        </select>
+                        <span class="absolute left-3 top-2.5 text-indigo-400">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
+                                stroke="currentColor">
+                                <circle cx="12" cy="12" r="10" />
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h8" />
+                            </svg>
+                        </span>
+                    </div>
+                    <div class="relative">
+                        <select name="sort"
+                            class="pl-10 pr-4 py-2 rounded-xl border border-gray-700 bg-gray-900 text-gray-100 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition">
+                            <option value="">Sort by...</option>
+                            <option value="due_asc">Due Date ↑</option>
+                            <option value="due_desc">Due Date ↓</option>
+                            <option value="status_asc">Status ↑</option>
+                            <option value="status_desc">Status ↓</option>
+                        </select>
+                        <span class="absolute left-3 top-2.5 text-indigo-400">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
+                                stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M4 6h16M4 12h8m-8 6h16" />
+                            </svg>
+                        </span>
+                    </div>
+                    <label class="inline-flex items-center cursor-pointer select-none">
+                        <input type="checkbox" id="trashedCheckbox" name="trashed" class="peer sr-only" />
+                        <span
+                            class="px-4 py-2 rounded-xl border-2 font-semibold shadow transition border-red-400 text-red-400 bg-transparent peer-checked:bg-red-900 peer-checked:text-white peer-checked:border-red-900">
+                            Show Trashed
+                        </span>
+                    </label>
+                    <div class="relative flex-1 min-w-[180px]">
+                        <input type="text" name="search" placeholder="Search tasks..."
+                            class="pl-10 pr-4 py-2 rounded-xl border border-gray-700 bg-gray-900 text-gray-100 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition w-full" />
+                        <span class="absolute left-3 top-2.5 text-indigo-400">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
+                                stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M21 21l-4.35-4.35M11 17a6 6 0 100-12 6 6 0 000 12z" />
+                            </svg>
+                        </span>
+                    </div>
+                    <button type="submit"
+                        class="px-4 py-2 rounded-xl bg-indigo-600 text-white font-semibold shadow hover:bg-indigo-700 transition flex items-center gap-1">
+                        Apply
+                    </button>
+                </form>
+            </div>
+
+
+
             <!-- show the all Tasks Modal -->
             <div class="bg-gray-800 shadow-lg overflow-x-auto">
                 <table class="min-w-full text-sm">
@@ -126,7 +206,9 @@
                                     <td class="py-3 px-4 truncate max-w-xs text-gray-400">
                                         {{ $task->description }}
                                     </td>
-                                    <td class="py-3 px-4 text-white">{{ $task->category->name }}</td>
+                                    <td class="py-3 px-4 text-white"
+                                        style="background-color: {{ $task->category->color }}">{!! $task->category->icon !!}
+                                        {{ $task->category->name }}</td>
                                     <td class="py-3 px-4 text-white">
                                         {{ \Carbon\Carbon::parse(time: $task->due_date)->format('Y-m-d') }}</td>
 
@@ -139,9 +221,17 @@
                                             class="px-3 py-1 rounded-xl bg-emerald-900 text-emerald-300 font-semibold">{{ str_replace('_', ' ', $task->status) }}
                                         </span>
                                     </td> --}}
-                                    <td class="py-3 px-4">
+                                    {{-- <td class="py-3 px-4">
                                         <span
                                             class="px-3 py-1 rounded-xl bg-emerald-900 text-emerald-300 font-semibold">{{ str_replace('_', ' ', Str::title($task->status)) }}
+                                        </span>
+                                    </td> --}}
+                                    <td class="py-3 px-4">
+                                        <span
+                                            class="inline-flex items-center gap-2 px-3 py-1 rounded-xl text-white font-semibold capitalize"
+                                            style="background-color: {{ $task->getTaskColor() }}">
+                                            {!! $task->getTaskIcon() !!}
+                                            {{ str_replace('_', ' ', Str::title($task->status)) }}
                                         </span>
                                     </td>
                                     <td class="py-3 px-4 flex gap-2">
